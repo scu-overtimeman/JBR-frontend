@@ -6,11 +6,12 @@ import * as types from '../store/types'
 Vue.use(Router)
 
 import LogIn from '../components/LogIn'
+import Home from '../components/Home'
 
 //views conponents:
 import LogInCard from '../views/LogInCard'
 import RegistCard from '../views/RegistCard'
-import Home from '../components/Home'
+import PersonalPage from '../views/PersonalPage'
 
 const routes = {
   routes: [
@@ -41,7 +42,17 @@ const routes = {
       meta:{
         requireAuth: true
       },
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: '/home/personalPage',
+          name: 'PersonalPage',
+          meta:{
+            requireAuth: true
+          },
+          component: PersonalPage
+        },
+      ]
     },
     {
       path:'/',

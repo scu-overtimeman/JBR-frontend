@@ -31,18 +31,21 @@
           </div>
 
           <div class="form-group row">
-            <label class="col-md-12">Password</label>
-            <div class="col-md-12">
-              <input type="checkbox" placeholder="" class="form-control form-control-line" v-model="logInForm.password">
+            <label class="col-md-6">Remember Me</label>
+            <div class="col-md-6">
+              <label>
+                123
+                <input type="checkbox" class="checkbox">
+              </label>
             </div>
           </div>
 
           <div class="form-group row">
-            <div class="col-sm-6">
-              <button class="btn btn-success col" @click="jumpToHomePage">log in</button>
+            <div class="col-6">
               <!--<button class="btn btn-success col" @click="submitUserForm">log in</button>-->
+              <button class="btn btn-success col" @click="jumpToHomePage">log in</button>
             </div>
-            <div class="col-sm-6">
+            <div class="col-6">
               <button class="btn btn-success col" @click="toRegist">Regist</button>
             </div>
           </div>
@@ -103,6 +106,7 @@
           if(respCode==CODE_SUCCESS){
             console.log(respMsg)
             this.alert_msg = ''
+            // this.getToken()
             this.jumpToHomePage()
           }
           else {
@@ -116,10 +120,14 @@
       },
 
       jumpToHomePage(){
-        console.log('修改token')
-        this.$store.commit(types.LOGIN, this.encodeForm)
+        this.getToken()
         console.log('跳转至主页面')
         this.$router.replace({name: 'Home'})
+      },
+      //取得令牌
+      getToken(){
+        console.log('修改token')
+        this.$store.commit(types.LOGIN, this.encodeForm)
       }
     },
 

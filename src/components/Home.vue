@@ -12,7 +12,8 @@
           <div class="col-auto navbar-header">
             <a class="navbar-brand">
               <b>
-                <img src="../../static/images/logo_sm_light.png" alt="homepage" class="light-logo" />
+                <img v-if="showFullLogo" src="../../static/images/logo_sm_light.png" alt="homepage" class="light-logo" />
+                <img v-else src="../../static/images/logo_min_sm_light.png" alt="homepage" class="light-logo" />
               </b>
             </a>
           </div>
@@ -23,11 +24,17 @@
             <!-- ============================================================== -->
             <!-- toggle and nav items -->
             <!-- ============================================================== -->
-            <div class="navbar-nav mr-auto mt-md-0">
-              <div class="align-self-center col-sm-auto offset-1">
-                <a style="color: white; font-family: 黑体; font-size: 32px">加班人才大数据分析平台</a>
-              </div>
-            </div>
+            <ul class="navbar-nav mr-auto mt-md-0">
+              <!-- This is  -->
+              <li class="nav-item">
+                <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)">
+                  <i class="mdi mdi-menu"></i>
+                </a>
+              </li>
+              <li class="align-self-center col-sm-auto offset-1">
+                <a v-show="showTitle" style="color: white; font-family: 黑体; font-size: 32px">加班人才大数据分析平台</a>
+              </li>
+            </ul>
             <!-- ============================================================== -->
             <!-- User profile and search -->
             <!-- ============================================================== -->
@@ -36,10 +43,10 @@
               <!-- Profile -->
               <!-- ============================================================== -->
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <router-link :to="{name:'PersonalPage'}" class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <img src="../../static/images/user_head.png" alt="user" class="profile-pic m-r-10" />
                   {{user_name}}
-                </a>
+                </router-link>
               </li>
             </ul>
           </div>
@@ -58,22 +65,10 @@
           <nav class="sidebar-nav">
             <ul id="sidebarnav">
               <li>
-                <a class="waves-effect waves-dark" href="index.html" aria-expanded="false">
-                  <i class="mdi mdi-gauge"></i>
-                  <span class="hide-menu">Dashboard</span>
-                </a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="pages-profile.html" aria-expanded="false"><i class="mdi mdi-account-check"></i><span class="hide-menu">Profile</span></a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="table-basic.html" aria-expanded="false"><i class="mdi mdi-table"></i><span class="hide-menu">Basic Table</span></a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="icon-material.html" aria-expanded="false"><i class="mdi mdi-emoticon"></i><span class="hide-menu">Icons</span></a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="map-google.html" aria-expanded="false"><i class="mdi mdi-earth"></i><span class="hide-menu">Google Map</span></a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="pages-blank.html" aria-expanded="false"><i class="mdi mdi-book-open-variant"></i><span class="hide-menu">Blank Page</span></a>
-              </li>
-              <li> <a class="waves-effect waves-dark" href="pages-error-404.html" aria-expanded="false"><i class="mdi mdi-help-circle"></i><span class="hide-menu">Error 404</span></a>
+                <router-link :to="{name:'PersonalPage'}" class="waves-effect waves-dark" aria-expanded="false">
+                  <i class="mdi mdi-account"></i>
+                  <span class="hide-menu">Personal Page</span>
+                </router-link>
               </li>
             </ul>
           </nav>
@@ -88,6 +83,7 @@
       <!-- Page wrapper  -->
       <!-- ============================================================== -->
       <div class="page-wrapper">
+        <router-view></router-view>
         <!-- ============================================================== -->
         <!-- Container fluid  -->
         <!-- ============================================================== -->
@@ -423,7 +419,51 @@
     name: 'Home',
     data(){
       return{
-        user_name : 'Over Working Man'
+        user_name : 'Over Working Man',
+        screenWidth : window.innerWidth
+      }
+    },
+    computed:{
+      showFullLogo(){
+        if(this.screenWidth > 1169){
+          return true
+        }
+        else {
+          return false
+        }
+      },
+      showTitle(){
+        if(this.screenWidth > 720){
+          return true
+        }
+        else {
+          return false
+        }
+      },
+    },
+
+    mounted(){
+      const that = this
+      window.onresize = function () {
+        return (function () {
+          window.screenWidth = window.innerWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
+    watch:{
+      screenWidth(val){
+        if(!this.timer){
+          this.screenWidth = val
+          this.timer = true
+          let that = this
+          setTimeout(function () {
+            console.log(that.screenWidth)
+            that.init()
+            that.timer = false
+          }, 400)
+
+        }
       }
     }
   }
