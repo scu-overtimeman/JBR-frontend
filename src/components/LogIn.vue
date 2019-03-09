@@ -1,5 +1,5 @@
 <template>
-  <div class="fix-header fix-sidebar card-no-border background" :style="'height:'+getWindowHeight+'px'">
+  <div class="fix-header fix-sidebar card-no-border background" :style="'height:'+screenHeight+'px'">
     <!--<div class="preloader">-->
       <!--<svg class="circular" viewBox="25 25 50 50">-->
         <!--<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>-->
@@ -18,7 +18,8 @@
           <div class="col-auto navbar-header">
             <a class="navbar-brand">
               <b>
-                <img src="../../static/images/logo_sm_light.png" alt="homepage" class="light-logo" />
+                <img v-if="showFullLogo" src="../../static/images/logo_sm_light.png" alt="homepage" class="light-logo" />
+                <img v-else src="../../static/images/logo_min_sm_light.png" alt="homepage" class="light-logo" />
               </b>
             </a>
           </div>
@@ -64,17 +65,65 @@
 
       </div>
     </div>
-    <footer class="footer row-12">
-      © 2019 加 班 人
-    </footer>  </div>
+  </div>
 </template>
 
 <script>
+  import store from '../store/store'
+
   export default {
     name: 'LogIn',
+    data(){
+      return{
+        screenHeight: window.screenHeight,
+        screenWidth: window.screenWidth
+      }
+    },
+    mounted(){
+      if(store.state.token){
+        this.$router.replace({name:'Home'})
+      }
+
+      const that = this
+      this.screenHeight = window.innerHeight
+      window.onresize = function () {
+        return (function () {
+          window.screenHeight = window.innerHeight
+          that.screenHeight = window.screenHeight
+          window.screenWidth = window.innerWidth
+          that.screenWidth = window.screenWidth
+        })()
+      }
+    },
     computed:{
-      getWindowHeight(){
-        return document.documentElement.clientHeight
+      showFullLogo(){
+        return this.screenWidth > 1169;
+      },
+    },
+    watch:{
+      screenWidth(val){
+        if(!this.timer){
+          this.screenWidth = val
+          this.timer = true
+          let that = this
+          setTimeout(function () {
+            console.log(that.screenWidth)
+            that.init()
+            that.timer = false
+          }, 400)
+        }
+      },
+      screenHeight(val){
+        if(!this.timer){
+          this.screenHeight = val
+          this.timer = true
+          let that = this
+          setTimeout(function () {
+            console.log(that.screenHeight)
+            that.init()
+            that.timer = false
+          }, 400)
+        }
       }
     }
   }

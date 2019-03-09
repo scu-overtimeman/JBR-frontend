@@ -12,7 +12,7 @@
 
           <div class="row">
             <div class="col-12">
-              <p style="color: red">{{alert_msg}}</p>
+              <p class="text-danger">{{alertMsg}}</p>
             </div>
           </div>
 
@@ -31,13 +31,14 @@
           </div>
 
           <div class="form-group row">
-            <label class="col-md-6">Remember Me</label>
-            <div class="col-md-6">
+            <label class="col-6">
+              Remember Me
               <label>
-                123
-                <input type="checkbox" class="checkbox">
+                <input type="checkbox" class="checkbox" v-model="logInForm.rem_me_check"/>
               </label>
-            </div>
+            </label>
+            <label class="col-6">
+            </label>
           </div>
 
           <div class="form-group row">
@@ -58,6 +59,8 @@
 
 <script>
   import * as types from '../store/types'
+  import store from '../store/store'
+
   export default {
     name: 'LogInCard',
 
@@ -66,9 +69,9 @@
         logInForm :{
           user_name : '',
           password : '',
-          check_box : false
+          rem_me_check : false
         },
-        alert_msg : ''
+        alertMsg : ''
       }
     },
     mounted(){
@@ -82,10 +85,10 @@
 
       submitUserForm(){
         if(!(this.logInForm.user_name && this.logInForm.password)){
-          this.alert_msg = '用户名或密码不能为空！'
+          this.alertMsg = '用户名或密码不能为空！'
         }
         else{
-          this.alert_msg = ''
+          this.alertMsg = ''
           this.postUserForm()
         }
       },
@@ -100,18 +103,19 @@
         this.axios.post(URL,this.encodeForm()
         ).then(function (response) {
           console.log(response)
-          const respCode = response.data.code
+          const respCode = response.status
           const respMsg = response.data.msg
 
           if(respCode==CODE_SUCCESS){
             console.log(respMsg)
-            this.alert_msg = ''
-            // this.getToken()
+            this.alertMsg = ''
+            //将用户信息存入令牌
+            this.getToken(response.data)
             this.jumpToHomePage()
           }
           else {
             console.log(respMsg)
-            this.alert_msg = '用户名或密码错误!'
+            this.alertMsg = '用户名或密码错误!'
           }
         }).catch(function (err) {
           console.log(err)
@@ -120,14 +124,15 @@
       },
 
       jumpToHomePage(){
-        this.getToken()
+        this.getToken(this.logInForm)//正式部署时删除此行
         console.log('跳转至主页面')
         this.$router.replace({name: 'Home'})
+        location.reload()
       },
       //取得令牌
-      getToken(){
+      getToken(user_data){
         console.log('修改token')
-        this.$store.commit(types.LOGIN, this.encodeForm)
+        this.$store.commit(types.LOGIN, user_data)
       }
     },
 
@@ -138,15 +143,28 @@
         const hash = bcrypt.hashSync(this.logInForm.password, salt)
         return {
           user_name: this.logInForm.user_name,
-          password: hash
+          password: hash,
+          rem_me_check: this.checkOnOff
+        }
+      },
+      checkOnOff(){
+        if(this.logInForm.rem_me_check){
+          return 'On'
+        }
+        else {
+          return 'Off'
         }
       }
-
     }
 
   }
 </script>
 
 <style scoped>
-
+  .checkbox{
+    position: center;
+    left: auto;
+    top: 25%;
+    opacity: initial;
+  }
 </style>

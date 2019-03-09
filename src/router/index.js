@@ -7,11 +7,13 @@ Vue.use(Router)
 
 import LogIn from '../components/LogIn'
 import Home from '../components/Home'
+import PagePermiDeny from '../components/PagePermiDeny'
 
 //views conponents:
 import LogInCard from '../views/LogInCard'
 import RegistCard from '../views/RegistCard'
 import PersonalPage from '../views/PersonalPage'
+import axios from 'axios'
 
 const routes = {
   routes: [
@@ -55,6 +57,11 @@ const routes = {
       ]
     },
     {
+      path:'/pagePermiDeny',
+      name:'PagePermiDeny',
+      component: PagePermiDeny
+    },
+    {
       path:'/',
       redirect:'/home'
     }
@@ -68,10 +75,34 @@ if (window.localStorage.getItem('token')) {
 
 const router = new Router(routes)
 
-router.beforeEach((to, from, next) => {
+//跳转时，依权限决定重定向至登录页面
+let redireByAuth = function(to, from, next){
   if (to.matched.some(r => r.meta.requireAuth)) {
     if (store.state.token) {
-      next();
+      //检查特定页面权限限制
+      const URL = ''
+      const CODE_SUCCESS = 200
+      const CODE_FAIL = 500
+      const CODE_ERROR = 500
+      const CODE_NO_LOGIN = 300
+
+      // axios
+      //   .get(URL)
+      //   .then((response)=>{
+      //     console.log(response)
+      //     if(response.status===CODE_SUCCESS){
+      //       next();
+      //     }
+      //     else{
+      //       alert("拒绝访问:权限不足")
+      //     }
+      //   })
+      //   .catch((err)=>{
+      //     console.log(err)
+      //     alert('权限验证出错：无网络连接')
+      //   })
+
+      next()//正式部署时删除此行
     }
     else {
       next({
@@ -81,8 +112,12 @@ router.beforeEach((to, from, next) => {
     }
   }
   else {
-    next();
+    next()
   }
+}
+
+router.beforeEach((to, from, next) => {
+  redireByAuth(to, from, next)
 })
 
 export default router

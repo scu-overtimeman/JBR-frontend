@@ -12,7 +12,7 @@
 
           <div class="row">
             <div class="col-12">
-              <p style="color: red">{{alert_msg}}</p>
+              <p class="text-danger">{{alert_msg}}</p>
             </div>
           </div>
 
@@ -59,7 +59,7 @@
           password : '',
           rep_passw : '',
         },
-        alert_msg : ''
+        alertMsg : ''
       }
     },
 
@@ -99,7 +99,7 @@
 
           if(respCode==CODE_SUCCESS){
             console.log(respMsg)
-            this.alert_msg = ''
+            this.alertMsg = ''
             alert('注册成功')
             this.$router.replace({name: 'LogInCard'})
           }

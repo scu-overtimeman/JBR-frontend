@@ -1,3 +1,6 @@
+/**
+ * 令牌存储的Vuex对象接口
+ */
 import Vuex from 'vuex'
 import Vue from 'vue'
 import * as types from './types'

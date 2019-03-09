@@ -78,6 +78,8 @@
 
 <script>
   import * as types from '../store/types'
+  import store from '../store/store'
+
   export default {
     name: 'personalPage',
     methods:{

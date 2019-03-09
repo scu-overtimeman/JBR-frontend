@@ -27,7 +27,7 @@
             <ul class="navbar-nav mr-auto mt-md-0">
               <!-- This is  -->
               <li class="nav-item">
-                <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)">
+                <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark">
                   <i class="mdi mdi-menu"></i>
                 </a>
               </li>
@@ -64,6 +64,18 @@
           <!-- Sidebar navigation-->
           <nav class="sidebar-nav">
             <ul id="sidebarnav">
+              <li>
+                <router-link :to="{name:'PersonalPage'}" class="waves-effect waves-dark" aria-expanded="false">
+                  <i class="mdi mdi-account"></i>
+                  <span class="hide-menu">Personal Page</span>
+                </router-link>
+              </li>
+              <li>
+                <router-link :to="{name:'PersonalPage'}" class="waves-effect waves-dark" aria-expanded="false">
+                  <i class="mdi mdi-account"></i>
+                  <span class="hide-menu">Personal Page</span>
+                </router-link>
+              </li>
               <li>
                 <router-link :to="{name:'PersonalPage'}" class="waves-effect waves-dark" aria-expanded="false">
                   <i class="mdi mdi-account"></i>
@@ -420,30 +432,20 @@
     data(){
       return{
         user_name : 'Over Working Man',
-        screenWidth : window.innerWidth
+        screenWidth : window.innerWidth,
       }
     },
     computed:{
       showFullLogo(){
-        if(this.screenWidth > 1169){
-          return true
-        }
-        else {
-          return false
-        }
+        return this.screenWidth > 1169;
       },
       showTitle(){
-        if(this.screenWidth > 720){
-          return true
-        }
-        else {
-          return false
-        }
+        return this.screenWidth > 720;
       },
     },
-
     mounted(){
       const that = this
+      that.screenWidth = window.innerWidth
       window.onresize = function () {
         return (function () {
           window.screenWidth = window.innerWidth
@@ -453,17 +455,18 @@
     },
     watch:{
       screenWidth(val){
-        if(!this.timer){
-          this.screenWidth = val
-          this.timer = true
-          let that = this
-          setTimeout(function () {
-            console.log(that.screenWidth)
-            that.init()
-            that.timer = false
-          }, 400)
-
-        }
+        this.screenWidth = val
+        // if(!this.timer){
+        //   this.screenWidth = val
+        //   this.timer = true
+        //   let that = this
+        //   setTimeout(function () {
+        //     console.log(that.screenWidth)
+        //     that.init()
+        //     that.timer = false
+        //   }, 400)
+        //
+        // }
       }
     }
   }
