@@ -31,23 +31,22 @@
           </div>
 
           <div class="form-group row">
-            <label class="col-6">
-              Remember Me
-              <label>
-                <input type="checkbox" class="checkbox" v-model="logInForm.rem_me_check"/>
-              </label>
+            <label class="col-6 align-self-center">
+              <a>Remember Me</a>
+              <input type="checkbox" class="checkbox offset-1" v-model="logInForm.rem_me_check"/>
             </label>
-            <label class="col-6">
+            <label class="col-auto">
+              <div class="col g-recaptcha" :data-sitekey="recaptKey"></div>
             </label>
           </div>
 
           <div class="form-group row">
             <div class="col-6">
-              <!--<button class="btn btn-success col" @click="submitUserForm">log in</button>-->
-              <button class="btn btn-success col" @click="jumpToHomePage">log in</button>
+              <!--<a class="btn btn-success col" @click="submitUserForm"><span style="color: white;">log in</span></a>-->
+              <a class="btn btn-success col" @click="jumpToHomePage"><span style="color: white;">log in</span></a>
             </div>
             <div class="col-6">
-              <button class="btn btn-success col" @click="toRegist">Regist</button>
+              <a class="btn btn-success col" @click="toRegist"><span style="color: white;">Regist</span></a>
             </div>
           </div>
 
@@ -59,7 +58,9 @@
 
 <script>
   import * as types from '../store/types'
+  import axios from 'axios'
   import store from '../store/store'
+  import md from 'md5'
 
   export default {
     name: 'LogInCard',
@@ -71,12 +72,17 @@
           password : '',
           rem_me_check : false
         },
-        alertMsg : ''
+        alertMsg : '',
+        recaptKey : '6LcghpYUAAAAAPDOU5N8RjAsBY6bBiYCVugI_X5f',
+        recaptId : 0,
       }
     },
     mounted(){
       //初始化Vuex.store
       this.$store.commit(types.TITLE, 'logInToken')
+      if (window.grecaptcha) {
+        this.recaptId = grecaptcha.render( $('.g-recaptcha')[0], { sitekey : this.recaptKey });
+      }
     },
     methods:{
       toRegist(){
@@ -86,6 +92,9 @@
       submitUserForm(){
         if(!(this.logInForm.user_name && this.logInForm.password)){
           this.alertMsg = '用户名或密码不能为空！'
+        }
+        else if(grecaptcha.getResponse(this.recaptId).length === 0){
+          this.alertMsg = '请完成身份验证！'
         }
         else{
           this.alertMsg = ''
@@ -100,7 +109,9 @@
         const CODE_ERROR = 500
         const CODE_NO_LOGIN = 300
 
-        this.axios.post(URL,this.encodeForm()
+        console.log('发送登录请求')
+
+        axios.post(URL,this.encodeForm
         ).then(function (response) {
           console.log(response)
           const respCode = response.status
@@ -134,16 +145,15 @@
         console.log('修改token')
         this.$store.commit(types.LOGIN, user_data)
       }
+
     },
 
     computed:{
       encodeForm(){
-        const bcrypt = require('bcryptjs')
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(this.logInForm.password, salt)
+        const hashPassword = md(this.logInForm.password)
         return {
           user_name: this.logInForm.user_name,
-          password: hash,
+          password: hashPassword,
           rem_me_check: this.checkOnOff
         }
       },
@@ -162,9 +172,9 @@
 
 <style scoped>
   .checkbox{
-    position: center;
     left: auto;
-    top: 25%;
     opacity: initial;
+    width: 18px;
+    height: 18px;
   }
 </style>

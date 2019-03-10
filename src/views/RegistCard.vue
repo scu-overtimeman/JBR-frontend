@@ -12,7 +12,7 @@
 
           <div class="row">
             <div class="col-12">
-              <p class="text-danger">{{alert_msg}}</p>
+              <p class="text-danger">{{alertMsg}}</p>
             </div>
           </div>
 
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+  import md from 'md5'
+
   export default {
     name: 'LogInCard',
 
@@ -67,19 +69,19 @@
       submitUserForm(){
         const rex = /^[a-zA-Z0-9_]{6,10}$/
         if(!(this.registForm.user_name && this.registForm.password && this.registForm.rep_passw)){
-          this.alert_msg='输入不能为空'
+          this.alertMsg='输入不能为空'
         }
         else if(!rex.test(this.registForm.user_name)){
-          this.alert_msg='您输入的用户名不合法'
+          this.alertMsg='您输入的用户名不合法'
         }
         else if(!rex.test(this.registForm.password)){
-          this.alert_msg='您输入的密码不合法'
+          this.alertMsg='您输入的密码不合法'
         }
         else if(this.registForm.password!=this.registForm.rep_passw){
-          this.alert_msg='两次密码输入不一致'
+          this.alertMsg='两次密码输入不一致'
         }
         else {
-          this.alert_msg=''
+          this.alertMsg=''
           this.postUserForm()
         }
       },
@@ -118,12 +120,10 @@
 
     computed:{
       encodeForm(){
-        const bcrypt = require('bcryptjs')
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(this.registForm.password, salt)
+        const hashPassword = md(this.registForm.password)
         return {
           user_name: this.registForm.user_name,
-          password: hash
+          password: hashPassword
         }
       }
     }
