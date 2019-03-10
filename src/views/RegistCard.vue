@@ -38,8 +38,14 @@
           </div>
 
           <div class="form-group row">
+            <label class="col-auto">
+              <div class="col g-recaptcha" :data-sitekey="recaptKey"></div>
+            </label>
+          </div>
+
+          <div class="form-group row">
             <div class="col-sm-12">
-              <button class="btn btn-success col-6" @click="submitUserForm">Complete</button>
+              <a class="btn btn-success col-6" @click="submitUserForm"><span style="color: white">Complete</span></a>
             </div>
           </div>
         </form>
@@ -50,9 +56,10 @@
 
 <script>
   import md from 'md5'
+  import axios from 'axios'
 
   export default {
-    name: 'LogInCard',
+    name: 'RegistCard',
 
     data(){
       return{
@@ -61,7 +68,15 @@
           password : '',
           rep_passw : '',
         },
-        alertMsg : ''
+        alertMsg : '',
+        recaptKey : '6LcghpYUAAAAAPDOU5N8RjAsBY6bBiYCVugI_X5f',
+        recaptId : 0,
+      }
+    },
+    mounted(){
+      //初始化reCAPTCHA
+      if (window.grecaptcha) {
+        this.recaptId = grecaptcha.render( $('.g-recaptcha')[0], { sitekey : this.recaptKey });
       }
     },
 
@@ -69,16 +84,19 @@
       submitUserForm(){
         const rex = /^[a-zA-Z0-9_]{6,10}$/
         if(!(this.registForm.user_name && this.registForm.password && this.registForm.rep_passw)){
-          this.alertMsg='输入不能为空'
+          this.alertMsg='输入不能为空!'
         }
         else if(!rex.test(this.registForm.user_name)){
-          this.alertMsg='您输入的用户名不合法'
+          this.alertMsg='您输入的用户名不合法!'
         }
         else if(!rex.test(this.registForm.password)){
-          this.alertMsg='您输入的密码不合法'
+          this.alertMsg='您输入的密码不合法!'
         }
         else if(this.registForm.password!=this.registForm.rep_passw){
-          this.alertMsg='两次密码输入不一致'
+          this.alertMsg='两次密码输入不一致!'
+        }
+        else if(grecaptcha.getResponse(this.recaptId).length === 0){
+          this.alertMsg = '请完成身份验证！'
         }
         else {
           this.alertMsg=''
@@ -93,7 +111,7 @@
         const CODE_ERROR = 500
         const CODE_NO_LOGIN = 300
 
-        this.axios.$http.post(URL,this.encodeForm()
+        axios.post(URL,this.encodeForm
         ).then(function (response){
           console.log(response)
           const respCode = response.data.code
@@ -112,7 +130,7 @@
 
         }).catch(function (err) {
           console.log(err)
-          alert('提交错误!')
+          alert('连接错误!'+err.message)
         })
       }
 

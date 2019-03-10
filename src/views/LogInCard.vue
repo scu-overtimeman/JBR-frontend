@@ -80,6 +80,7 @@
     mounted(){
       //初始化Vuex.store
       this.$store.commit(types.TITLE, 'logInToken')
+      //初始化reCAPTCHA
       if (window.grecaptcha) {
         this.recaptId = grecaptcha.render( $('.g-recaptcha')[0], { sitekey : this.recaptKey });
       }
@@ -130,7 +131,7 @@
           }
         }).catch(function (err) {
           console.log(err)
-          alert('连接错误：'+err)
+          alert('连接错误：'+err.message)
         })
       },
 
@@ -149,7 +150,7 @@
     },
 
     computed:{
-      encodeForm(){
+        encodeForm(){
         const hashPassword = md(this.logInForm.password)
         return {
           user_name: this.logInForm.user_name,

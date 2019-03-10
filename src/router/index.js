@@ -7,7 +7,6 @@ Vue.use(Router)
 
 import LogIn from '../components/LogIn'
 import Home from '../components/Home'
-import PagePermiDeny from '../components/PagePermiDeny'
 
 //views conponents:
 import LogInCard from '../views/LogInCard'
@@ -55,11 +54,6 @@ const routes = {
           component: PersonalPage
         },
       ]
-    },
-    {
-      path:'/pagePermiDeny',
-      name:'PagePermiDeny',
-      component: PagePermiDeny
     },
     {
       path:'/',
