@@ -39,9 +39,12 @@ axios.interceptors.response.use(
               query: { redirect: router.currentRoute.path },
             })
       }
+      // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
+      return Promise.reject(error.response.data)
     }
-    // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
-    return Promise.reject(error.response.data)
+    else {
+      return error
+    }
   },
 )
 

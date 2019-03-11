@@ -43,7 +43,7 @@
           <div class="form-group row">
             <div class="col-6">
               <!--<a class="btn btn-success col" @click="submitUserForm"><span style="color: white;">log in</span></a>-->
-              <a class="btn btn-success col" @click="jumpToHomePage"><span style="color: white;">log in</span></a>
+              <a class="btn btn-success col" @click="testLogIn"><span style="color: white;">log in</span></a>
             </div>
             <div class="col-6">
               <a class="btn btn-success col" @click="toRegist"><span style="color: white;">Regist</span></a>
@@ -115,18 +115,16 @@
         axios.post(URL,this.encodeForm
         ).then(function (response) {
           console.log(response)
-          const respCode = response.status
-          const respMsg = response.data.msg
+          const respCode = response.data.status
+          const respUserObj = response.data.obj
 
           if(respCode==CODE_SUCCESS){
-            console.log(respMsg)
             this.alertMsg = ''
-            //将用户信息存入令牌
-            this.getToken(response.data)
+            //更新令牌,本地储存用户信息
+            this.$store.commit(types.LOGIN, JSON.stringify(respUserObj))
             this.jumpToHomePage()
           }
           else {
-            console.log(respMsg)
             this.alertMsg = '用户名或密码错误!'
           }
         }).catch(function (err) {
@@ -136,15 +134,24 @@
       },
 
       jumpToHomePage(){
-        this.getToken(this.logInForm)//正式部署时删除此行
         console.log('跳转至主页面')
         this.$router.replace({name: 'Home'})
         location.reload()
       },
-      //取得令牌
-      getToken(user_data){
-        console.log('修改token')
-        this.$store.commit(types.LOGIN, user_data)
+
+      //测试用登录入口,正式部署时删除
+      testLogIn: function () {
+        const URL = 'http://localhost:8080/user/test'
+        axios.get(URL)
+          .then(function (response) {
+            const obj = response.data.obj
+            store.commit(types.LOGIN, JSON.stringify(obj))
+          })
+          .catch(function (err) {
+            console.log(err)
+            alert('连接错误：' + err.message)
+          })
+        this.jumpToHomePage()
       }
 
     },

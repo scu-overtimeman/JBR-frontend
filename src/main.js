@@ -21,6 +21,7 @@ import "../static/css/style.css"
 // // You can change the theme colors from here
 import "../static/css/colors/blue.css"
 
+Vue.prototype.HOME='/api'
 
 // Vue.use(VueAxios)
 Vue.config.productionTip = false

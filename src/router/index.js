@@ -12,6 +12,8 @@ import Home from '../components/Home'
 import LogInCard from '../views/LogInCard'
 import RegistCard from '../views/RegistCard'
 import PersonalPage from '../views/PersonalPage'
+import UserInfoCard from '../views/UserInfoCard'
+
 import axios from 'axios'
 
 const routes = {
@@ -44,6 +46,7 @@ const routes = {
         requireAuth: true
       },
       component: Home,
+      redirect: '/home/personalPage',
       children: [
         {
           path: '/home/personalPage',
@@ -51,9 +54,20 @@ const routes = {
           meta:{
             requireAuth: true
           },
-          component: PersonalPage
+          component: PersonalPage,
+          children: [
+            {
+              path:'/home/personalPage/userInfoCard',
+              name: 'UserInfoCard',
+              meta:{
+                requireAuth: true
+              },
+              component: UserInfoCard
+            }
+          ],
+          redirect:'/home/personalPage/userInfoCard'
         },
-      ]
+      ],
     },
     {
       path:'/',
@@ -62,9 +76,9 @@ const routes = {
   ]
 }
 
-// 页面刷新时，重新赋值token
-if (window.localStorage.getItem('token')) {
-  store.commit(types.LOGIN, window.localStorage.getItem('token'))
+// 页面刷新时，重新赋值令牌中的用户信息
+if (window.localStorage.getItem('user')) {
+  store.commit(types.LOGIN, window.localStorage.getItem('user'))
 }
 
 const router = new Router(routes)
