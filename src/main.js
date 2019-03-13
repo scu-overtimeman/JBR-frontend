@@ -20,6 +20,7 @@ import "../static/plugins/c3-master/c3.min.css"
 import "../static/css/style.css"
 // // You can change the theme colors from here
 import "../static/css/colors/blue.css"
+import "../static/js/chartist"
 
 Vue.prototype.HOME='/api'
 

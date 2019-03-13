@@ -32,7 +32,7 @@
 <script>
   import axios from 'axios'
   import store from '../store/store'
-  import types from '../store/types'
+  import * as types from '../store/types'
 
   export default {
     name: 'UserInfoCard',

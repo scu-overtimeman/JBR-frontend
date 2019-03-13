@@ -13,6 +13,8 @@ import LogInCard from '../views/LogInCard'
 import RegistCard from '../views/RegistCard'
 import PersonalPage from '../views/PersonalPage'
 import UserInfoCard from '../views/UserInfoCard'
+import AnalysisPage from '../views/AnalysisPage'
+
 import UserInfoEditCard from '../views/UserInfoEditCard'
 import ManagerPage from '../views/ManagerPage'
 import UserManagement from '../views/UserManagement'
@@ -95,7 +97,15 @@ const routes = {
               component: UserManagement
             }
           ],
-        }
+        },
+        {
+          path: '/home/analysisPage',
+          name: 'AnalysisPage',
+          meta:{
+            requireAuth: true
+          },
+          component: AnalysisPage
+        },
       ],
     },
     {
@@ -118,6 +128,7 @@ let redireByAuth = function(to, from, next){
     if (store.state.token) {
       //检查特定页面权限限制
       const URL = to.fullPath
+
       const CODE_SUCCESS = 200
       const CODE_FAIL = 500
       const CODE_ERROR = 500
@@ -138,12 +149,6 @@ let redireByAuth = function(to, from, next){
       //     console.log(err)
       //     alert('权限验证出错：无网络连接')
       //   })
-
-      console.log("beforeeach:\n" +
-        "to: "+ to + "\n"+
-        "to.fullpath: "+ to.fullPath + "\n"+
-        "to.path: " + to.path)
-
       next()//正式部署时删除此行
     }
     else {

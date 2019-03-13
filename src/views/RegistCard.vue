@@ -20,6 +20,7 @@
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
               <input type="text" placeholder="[6-20 length digit/alpha/underline]" class="form-control form-control-line" v-model="registForm.username">
+
             </div>
           </div>
 

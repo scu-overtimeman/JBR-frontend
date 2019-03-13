@@ -20,6 +20,7 @@
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
               <input type="text" placeholder="Your username" class="form-control form-control-line" v-model="logInForm.username">
+
             </div>
           </div>
 
@@ -69,6 +70,7 @@
       return{
         logInForm :{
           username : '',
+
           password : '',
           rem_me_check : false
         },
@@ -102,7 +104,7 @@
           this.postUserForm()
         }
       },
-      postUserForm(){
+      postUserForm() {
         //Post User Message
         const URL = ''
         const CODE_SUCCESS = 200
@@ -137,9 +139,7 @@
       jumpToHomePage(){
         console.log('跳转至主页面')
         this.$router.replace({name: 'Home'})
-        location.reload()
       },
-
 
       //测试用登录入口,正式部署时删除
       async testLogIn() {
