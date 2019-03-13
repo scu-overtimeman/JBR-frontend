@@ -110,35 +110,45 @@
 
       this.testInit()//正式部署时删除
 
-      this.getRemoteInfo()
-      // this.getUsersInfo()
-      // let allUsers = resp.data.obj
-      // let i = 0
-      // for(let user in allUsers){
-      //   if(allUsers[user].username !== this.selfUser.username){
-      //     this.users[i] = allUsers[user]
-      //     i+=1
-      //   }
-      // }
     },
     methods:{
       async getRemoteInfo(){
+        //取得自己的用户信息
         this.getSelfUser()
+        //取得其他人的用户信息
         let allUsers = await (this.getUsersInfo())
-
+        let i = 0
+        for(let user in allUsers){
+          if(allUsers[user].username !== this.selfUser.username){
+            this.users[i] = allUsers[user]
+            i+=1
+          }
+        }
+        //初始化当前选中的用户
+        this.showRoleUser = this.user[0]
+        //取得角色列表
+        this.getRolesList()
 
       },
-      //取得自己数据
+      //取得自己的用户信息
       getSelfUser(){
         this.selfUser = store.state.users
       },
-      //获取所有其他用户数据
+      //获取所有用户信息
       getUsersInfo(){
-
         const URL_allUsers = ''
 
         return axios.get(URL_allUsers)
           .then(resp=>resp.data.obj)
+          .catch(err=>alert("Fail to get users list:"+err))
+      },
+      //取得角色列表
+      getRolesList(){
+        const URL_rolesList = ''
+
+        return axios.get(URL_rolesList)
+          .then(resp=>resp.data.obj)
+          .catch(err=>alert("Fail to get roles list:"+err))
       },
 
       //正式部署时删除
@@ -226,11 +236,22 @@
             }
           }
         }
-
         this.showRolesCard = true
       },
       hideRoles(){
         this.showRolesCard = false
+      },
+      //修改其他用户的角色
+      submitRoleEdit(){
+        if(window.confirm("Confirm to change roles?")){
+          axios.post(URL_ROLE_EDIT, this.showRoleUser)
+            .then(resp=>{
+              if(resp.data.status){
+                alert("Success!")
+              }
+            })
+            .catch(err=>alert("Roles edit error："+err))
+        }
       }
     }
   }

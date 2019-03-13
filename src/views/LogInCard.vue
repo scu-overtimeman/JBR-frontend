@@ -19,14 +19,14 @@
           <div class="form-group row">
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="用户名" class="form-control form-control-line" v-model="logInForm.username">
+              <input type="text" placeholder="Your username" class="form-control form-control-line" v-model="logInForm.username">
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-md-12">Password</label>
             <div class="col-md-12">
-              <input type="password" placeholder="密码" class="form-control form-control-line" v-model="logInForm.password">
+              <input type="password" placeholder=" Your password" class="form-control form-control-line" v-model="logInForm.password">
             </div>
           </div>
 
@@ -92,10 +92,10 @@
 
       submitUserForm(){
         if(!(this.logInForm.username && this.logInForm.password)){
-          this.alertMsg = '用户名或密码不能为空！'
+          this.alertMsg = 'Input cannot be empty！'
         }
         else if(grecaptcha.getResponse(this.recaptId).length === 0){
-          this.alertMsg = '请完成身份验证！'
+          this.alertMsg = 'Please complete the authentication!'
         }
         else{
           this.alertMsg = ''
@@ -109,6 +109,7 @@
         const CODE_FAIL = 500
         const CODE_ERROR = 500
         const CODE_NO_LOGIN = 300
+        const that = this
 
         console.log('发送登录请求')
 
@@ -119,17 +120,17 @@
           const respUserObj = response.data.obj
 
           if(respCode==CODE_SUCCESS){
-            this.alertMsg = ''
+            that.alertMsg = ''
             //更新令牌,本地储存用户信息
-            this.$store.commit(types.LOGIN, JSON.stringify(respUserObj))
-            this.jumpToHomePage()
+            that.$store.commit(types.LOGIN, JSON.stringify(respUserObj))
+            that.jumpToHomePage()
           }
           else {
-            this.alertMsg = '用户名或密码错误!'
+            that.alertMsg = 'Username and password don\'t match!'
           }
         }).catch(function (err) {
           console.log(err)
-          alert('连接错误：'+err.message)
+          alert('Log in fail:'+err.message)
         })
       },
 
@@ -139,21 +140,23 @@
         location.reload()
       },
 
+
       //测试用登录入口,正式部署时删除
       async testLogIn() {
         let user = await this.getUser()
         store.commit(types.LOGIN, JSON.stringify(user))
         this.jumpToHomePage()
       },
-
+      //测试用登录入口,正式部署时删除
       getUser(){
         const URL = 'http://localhost:8080/user/test'
-        return axios.get(URL)
+        return axios.post(URL, this.encodeForm())
           .then(response => response.data.obj)
           .catch(err=>{
             alert("登录错误："+err)
           })
       }
+
 
     },
 

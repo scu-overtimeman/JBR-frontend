@@ -52,18 +52,18 @@
         axios.post(URL, this.userInfoForm)
           .then(function (response) {
             if(response.data.status===CODE_SUCCESS){
-              alert("个人信息修改成功")
+              alert("User information edit success")
               localStorage.flag = true
             }
             else if(response.data.status===CODE_ALREADYRIGIST){
-              alert("用户名已注册")
+              alert("This username was already exist!")
             }
             else {
-              alert("注册失败")
+              alert("Register fail")
             }
           })
           .catch(function (err) {
-            alert("个人信息修改失败"+err.message)
+            alert("Fail to edit user information"+err.message)
           })
 
         if(localStorage.getItem('flag')){

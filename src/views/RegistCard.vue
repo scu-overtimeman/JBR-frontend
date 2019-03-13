@@ -19,21 +19,21 @@
           <div class="form-group row">
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="用户名:[6-20位数字/大小写字符/下划线]" class="form-control form-control-line" v-model="registForm.username">
+              <input type="text" placeholder="[6-20 length digit/alpha/underline]" class="form-control form-control-line" v-model="registForm.username">
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-md-12">Password</label>
             <div class="col-md-12">
-              <input type="password" placeholder="输入密码:[6-20位数字/大小写字符/下划线]" class="form-control form-control-line" v-model="registForm.password">
+              <input type="password" placeholder="[6-20 length digit/alpha/underline]" class="form-control form-control-line" v-model="registForm.password">
             </div>
           </div>
 
           <div class="form-group row">
             <label class="col-md-12">Comfirm Password</label>
             <div class="col-md-12">
-              <input type="password" placeholder="确认密码" class="form-control form-control-line" v-model="registForm.rep_passw">
+              <input type="password" placeholder="Repeat Password" class="form-control form-control-line" v-model="registForm.rep_passw">
             </div>
           </div>
 
@@ -84,19 +84,19 @@
       submitUserForm(){
         const rex = /^[a-zA-Z0-9_]{6,20}$/
         if(!(this.registForm.username && this.registForm.password && this.registForm.rep_passw)){
-          this.alertMsg='输入不能为空!'
+          this.alertMsg='The input cannot be empty!'
         }
         else if(!rex.test(this.registForm.username)){
-          this.alertMsg='您输入的用户名不合法!'
+          this.alertMsg='Illegal username!'
         }
         else if(!rex.test(this.registForm.password)){
-          this.alertMsg='您输入的密码不合法!'
+          this.alertMsg='Illegal password!'
         }
         else if(this.registForm.password!=this.registForm.rep_passw){
-          this.alertMsg='两次密码输入不一致!'
+          this.alertMsg='Repeat password doesn\'t match!'
         }
         else if(grecaptcha.getResponse(this.recaptId).length === 0){
-          this.alertMsg = '请完成身份验证！'
+          this.alertMsg = 'Please complete the authentication！'
         }
         else {
           this.alertMsg=''
@@ -111,6 +111,7 @@
         const CODE_ERROR = 500
         const CODE_ALREADYRIGIST = 250
         const CODE_NO_LOGIN = 300
+        const that = this
 
         axios.post(URL,this.encodeForm
         ).then(function (response){
@@ -120,20 +121,20 @@
 
           if(respCode==CODE_SUCCESS){
             console.log(respMsg)
-            alert('注册成功')
-            this.$router.replace({name: 'LogInCard'})
+            alert('Register success')
+            that.$router.replace({name: 'LogInCard'})
           }
           else if (respCode==CODE_ALREADYRIGIST){
-            alert('注册失败：用户名已存在')
+            that.alertMsg = 'Register fail：Username already exist!'
           }
           else {
             console.log(respMsg)
-            alert('注册失败!')
+            alert('Register fail!')
           }
 
         }).catch(function (err) {
           console.log(err)
-          alert('连接错误!'+err.message)
+          alert('Register fail:'+err.message)
         })
       }
 
