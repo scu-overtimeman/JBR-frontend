@@ -144,20 +144,20 @@
       //测试用登录入口,正式部署时删除
       async testLogIn() {
         let user = await this.getUser()
-        store.commit(types.LOGIN, JSON.stringify(user))
+        if(user){
+          store.commit(types.LOGIN, JSON.stringify(user))
+        }
         this.jumpToHomePage()
       },
       //测试用登录入口,正式部署时删除
       getUser(){
         const URL = 'http://localhost:8080/user/test'
-        return axios.post(URL, this.encodeForm())
+        return axios.get(URL)
           .then(response => response.data.obj)
           .catch(err=>{
-            alert("登录错误："+err)
+            alert("Fail to log in:"+err.message)
           })
       }
-
-
     },
 
     computed:{

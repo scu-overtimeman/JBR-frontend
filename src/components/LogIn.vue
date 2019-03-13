@@ -52,8 +52,8 @@
           </div>
           <div>
             <br>
-            <h1>加班人才大数据分析平台</h1>
-            <br/>
+            <h1>Just a Bigdata Platform <br>for Recruitment</h1>
+            <br>
           </div>
 
         </div>

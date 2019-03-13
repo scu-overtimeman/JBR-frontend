@@ -73,7 +73,7 @@
           </table>
           <div class="row">
             <div class="col-5">
-              <a class="btn btn-success"><span style="color: white">Submit</span></a>
+              <a class="btn btn-success" @click="submitRoleEdit"><span style="color: white">Submit</span></a>
             </div>
             <div class="col-5">
               <a class="btn btn-danger" @click="hideRoles"><span style="color: white">Cancel</span></a>
@@ -104,6 +104,12 @@
         rolesList:[],
         rolesCardX: 0+'px',
         rolesCardY: 0+'px',
+
+        URL_ALL_USERS: '',
+        URL_ROLES_LIST: '',
+        URL_ROLE_EDIT: '',
+
+
       }
     },
     mounted() {
@@ -136,17 +142,15 @@
       },
       //获取所有用户信息
       getUsersInfo(){
-        const URL_allUsers = ''
 
-        return axios.get(URL_allUsers)
+        return axios.get(this.URL_ALL_USERS)
           .then(resp=>resp.data.obj)
           .catch(err=>alert("Fail to get users list:"+err))
       },
       //取得角色列表
       getRolesList(){
-        const URL_rolesList = ''
 
-        return axios.get(URL_rolesList)
+        return axios.get(this.URL_ROLES_LIST)
           .then(resp=>resp.data.obj)
           .catch(err=>alert("Fail to get roles list:"+err))
       },
@@ -244,7 +248,7 @@
       //修改其他用户的角色
       submitRoleEdit(){
         if(window.confirm("Confirm to change roles?")){
-          axios.post(URL_ROLE_EDIT, this.showRoleUser)
+          axios.post(this.URL_ROLE_EDIT, this.showRoleUser)
             .then(resp=>{
               if(resp.data.status){
                 alert("Success!")

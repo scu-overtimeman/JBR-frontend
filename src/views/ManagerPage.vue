@@ -14,11 +14,11 @@
       <div class="card col-12">
         <div class="card-block">
           <div class="row">
-            <div class="col-lg-3">
+            <div class="col-xl-4">
               <router-link :to="{name:'UserManagement'}" class="btn btn-success col" ><span style="color: white">Users Management</span></router-link>
             </div>
-            <div class="col-lg-3">
-              <a class="btn btn-success col" ><span style="color: white">Users Management</span></a>
+            <div class="col-xl-4">
+              <a class="btn btn-success col" ><span style="color: white">Data Resource Management</span></a>
             </div>
           </div>
         </div>
