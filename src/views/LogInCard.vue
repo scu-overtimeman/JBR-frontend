@@ -19,7 +19,7 @@
           <div class="form-group row">
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="用户名" class="form-control form-control-line" v-model="logInForm.user_name">
+              <input type="text" placeholder="用户名" class="form-control form-control-line" v-model="logInForm.username">
             </div>
           </div>
 
@@ -68,7 +68,7 @@
     data(){
       return{
         logInForm :{
-          user_name : '',
+          username : '',
           password : '',
           rem_me_check : false
         },
@@ -91,7 +91,7 @@
       },
 
       submitUserForm(){
-        if(!(this.logInForm.user_name && this.logInForm.password)){
+        if(!(this.logInForm.username && this.logInForm.password)){
           this.alertMsg = '用户名或密码不能为空！'
         }
         else if(grecaptcha.getResponse(this.recaptId).length === 0){
@@ -140,18 +140,19 @@
       },
 
       //测试用登录入口,正式部署时删除
-      testLogIn: function () {
-        const URL = 'http://localhost:8080/user/test'
-        axios.get(URL)
-          .then(function (response) {
-            const obj = response.data.obj
-            store.commit(types.LOGIN, JSON.stringify(obj))
-          })
-          .catch(function (err) {
-            console.log(err)
-            alert('连接错误：' + err.message)
-          })
+      async testLogIn() {
+        let user = await this.getUser()
+        store.commit(types.LOGIN, JSON.stringify(user))
         this.jumpToHomePage()
+      },
+
+      getUser(){
+        const URL = 'http://localhost:8080/user/test'
+        return axios.get(URL)
+          .then(response => response.data.obj)
+          .catch(err=>{
+            alert("登录错误："+err)
+          })
       }
 
     },
@@ -160,9 +161,9 @@
         encodeForm(){
         const hashPassword = md(this.logInForm.password)
         return {
-          user_name: this.logInForm.user_name,
-          password: hashPassword,
-          rem_me_check: this.checkOnOff
+          "username": this.logInForm.username,
+          "password": hashPassword,
+          "rem_me_check": this.checkOnOff
         }
       },
       checkOnOff(){

@@ -22,7 +22,7 @@
             <div class="form-group col">
               <div class="row">
                 <div class="col-6">
-                  <a class="btn btn-success col-12"><span style="color: white;">Edit</span></a>
+                  <a class="btn btn-success col-12" @click="jumpToEdit"><span style="color: white;">Edit</span></a>
                 </div>
                 <div class="col-6">
                   <a class="btn btn-warning col-12" @click="logOut"><span style="color: white;">Log Out</span></a>
@@ -59,6 +59,10 @@
       //跳转至登录页
       jumpToLogInPage(){
         this.$router.replace({name:'LogInCard'})
+      },
+      //跳转至编辑页
+      jumpToEdit(){
+        this.$router.replace({name:'UserInfoEditCard'})
       }
     }
   }

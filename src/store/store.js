@@ -14,11 +14,12 @@ export default new Vuex.Store({
     },
     mutations: {
         [types.LOGIN]: (state, data) => {
+          if(data!=='undefined'){
             localStorage.token = 'token';
             state.token = "token";
             localStorage.user = data
             state.user = JSON.parse(data);
-            console.log(state.user.roles[0].name);
+          }
         },
         [types.LOGOUT]: (state) => {
             localStorage.removeItem('token');

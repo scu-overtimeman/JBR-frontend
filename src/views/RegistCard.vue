@@ -19,7 +19,7 @@
           <div class="form-group row">
             <label class="col-md-12">User Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="用户名:[6-20位数字/大小写字符/下划线]" class="form-control form-control-line" v-model="registForm.user_name">
+              <input type="text" placeholder="用户名:[6-20位数字/大小写字符/下划线]" class="form-control form-control-line" v-model="registForm.username">
             </div>
           </div>
 
@@ -64,7 +64,7 @@
     data(){
       return{
         registForm:{
-          user_name : '',
+          username : '',
           password : '',
           rep_passw : '',
         },
@@ -82,11 +82,11 @@
 
     methods:{
       submitUserForm(){
-        const rex = /^[a-zA-Z0-9_]{6,10}$/
-        if(!(this.registForm.user_name && this.registForm.password && this.registForm.rep_passw)){
+        const rex = /^[a-zA-Z0-9_]{6,20}$/
+        if(!(this.registForm.username && this.registForm.password && this.registForm.rep_passw)){
           this.alertMsg='输入不能为空!'
         }
-        else if(!rex.test(this.registForm.user_name)){
+        else if(!rex.test(this.registForm.username)){
           this.alertMsg='您输入的用户名不合法!'
         }
         else if(!rex.test(this.registForm.password)){
@@ -109,6 +109,7 @@
         const CODE_SUCCESS = 200
         const CODE_FAIL = 500
         const CODE_ERROR = 500
+        const CODE_ALREADYRIGIST = 250
         const CODE_NO_LOGIN = 300
 
         axios.post(URL,this.encodeForm
@@ -119,9 +120,11 @@
 
           if(respCode==CODE_SUCCESS){
             console.log(respMsg)
-            this.alertMsg = ''
             alert('注册成功')
             this.$router.replace({name: 'LogInCard'})
+          }
+          else if (respCode==CODE_ALREADYRIGIST){
+            alert('注册失败：用户名已存在')
           }
           else {
             console.log(respMsg)
@@ -140,7 +143,7 @@
       encodeForm(){
         const hashPassword = md(this.registForm.password)
         return {
-          user_name: this.registForm.user_name,
+          username: this.registForm.username,
           password: hashPassword
         }
       }
