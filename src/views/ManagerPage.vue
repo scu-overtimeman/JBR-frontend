@@ -18,7 +18,7 @@
               <router-link :to="{name:'UserManagement'}" class="btn btn-success col" ><span style="color: white">Users Management</span></router-link>
             </div>
             <div class="col-xl-4">
-              <a class="btn btn-success col" ><span style="color: white">Data Resource Management</span></a>
+              <router-link :to="{name:'DataSrcManagement'}" class="btn btn-success col" ><span style="color: white">Data Source Management</span></router-link>
             </div>
           </div>
         </div>

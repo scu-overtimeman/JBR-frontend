@@ -32,7 +32,7 @@
             <!--search input by modes-->
             <div v-if="searchMod===allSearchMods[0]" class="col-11">
               <input type="text" placeholder="Please enter information of positions you'd like to know"
-                     v-model="searchBox" class="col-12 form-control form-control-line" @keyup.enter="searchSubmit"
+                     v-model="searchBox.searchKeys" class="col-12 form-control form-control-line" @keyup.enter="searchSubmit"
               />
             </div>
 
@@ -73,7 +73,7 @@
         <h4 class="card-title">Searching Result</h4>
         <div class="table-responsive">
 
-          <table v-if="chartModType===allSearchMods[0]" class="table">
+          <table v-if="chartModType===allSearchMods[0] && fuzzyResult.length>0" class="table">
             <thead>
             <tr>
               <th>Position</th>
@@ -84,7 +84,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(i, index) in fuzzyResult" :key="index">
+            <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
               <td>{{i.name}}</td>
               <td>{{i.org}}</td>
               <td>{{i.salary.floor}}-{{i.salary.ceiling}}</td>
@@ -94,7 +94,7 @@
             </tbody>
           </table>
 
-          <table v-else-if="chartModType===allSearchMods[1]" class="table">
+          <table v-else-if="chartModType===allSearchMods[1] && salaryResult.length>0" class="table">
             <thead>
             <tr>
               <th>Position</th>
@@ -105,7 +105,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(i, index) in salaryResult" :key="index">
+            <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
               <td>{{i.name}}</td>
               <td>{{i.org}}</td>
               <td>{{i.salary.floor}}-{{i.salary.ceiling}}</td>
@@ -115,7 +115,7 @@
             </tbody>
           </table>
 
-          <table v-else-if="chartModType===allSearchMods[2]" class="table">
+          <table v-else-if="chartModType===allSearchMods[2] && regionResult.length>0" class="table">
             <thead>
             <tr>
               <th>Position</th>
@@ -123,13 +123,29 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(i, index) in regionResult" :key="index">
+            <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
               <td>{{i.name}}</td>
               <td>{{i.employees}}</td>
             </tr>
             </tbody>
           </table>
 
+          <div v-else>
+            <h3>Opps! No result found!</h3>
+          </div>
+
+        </div>
+        <!--footer: page number-->
+        <div class="row justify-content-center" v-show="chartToShow.length>0">
+          <div class="col-auto align-self-center">
+            <a v-show="chartPageNum>0" class="btn" @click="toPrevPage">Prev</a>
+          </div>
+          <div class="col-auto align-self-center">
+            <a class="">Page  {{chartPageNum+1}} / {{chartToShow.length}}</a>
+          </div>
+          <div class="col-auto align-self-center">
+            <a v-show="chartPageNum+1 < chartToShow.length" class="btn" @click="toNextPage">Next</a>
+          </div>
         </div>
       </div>
     </div>
@@ -146,9 +162,10 @@
     components: {CityChooser},
     data(){
       return{
-        URL_FUZZY: '',
-        URL_SALARY: '',
-        URL_REGION: '',
+
+        URL_FUZZY: 'transaction/searchBox',
+        URL_SALARY: 'transaction/searchRegion',
+        URL_REGION: 'transaction/searchSalaryRange',
 
         //alertMsg
         alertMsg : '',
@@ -158,7 +175,9 @@
         searchMod: "",
 
         //Search Input
-        searchBox: '',
+        searchBox: {
+          searchKeys: ''
+        },
         searchSalaryRange: {
           ceiling: 0,
           floor: 0
@@ -169,26 +188,21 @@
         },
 
         //Search Output
-        fuzzyResult: [
-          {
-            name: '',
-            org: '',
-            salary: {
-              floor: '',
-              ceiling: ''
-            },
-            edu: '',
-            location: ''
-          }
-        ],
+        fuzzyResult: [],
         salaryResult:[],
         regionResult:[],
 
+        //chart to show
         chartModType: '',
+        chartToShow: [],
+        chartPageNum: 0,
+        ITEMS_PER_PAGE: 20,
       }
     },
     mounted(){
+      //data initialization
       this.searchMod = this.allSearchMods[0]
+
     },
     methods:{
       searchSubmit(){
@@ -203,16 +217,21 @@
           this.submitRegion()
         }
       },
+
+
       // submitFuzzy(){
       //   if(this.fuzzySubmitCheck===false){
       //     return
       //   }
       //   const that = this
-      //   axios.post(this.URL_FUZZY, this.searchBox)
+      //   axios.post(this.URL_FUZZY, this.searchBox.searchKeys)
       //     .then(resp=>{
       //       if(resp.data.obj){
       //         that.chartModType = that.searchMod
       //         that.fuzzyResult = resp.data.obj
+      //
+      //         this.chartToShow = this.splitResult(this.fuzzyResult)
+      //
       //       }
       //       else {
       //         alert("Searching Fail!")
@@ -233,6 +252,9 @@
       //       if(resp.data.obj){
       //         that.chartModType = that.searchMod
       //         that.salaryResult = resp.data.obj
+      //
+      //         this.chartToShow = this.splitResult(this.salaryResult)
+      //
       //       }
       //       else {
       //         alert("Searching Fail!")
@@ -250,6 +272,9 @@
       //       if(resp.data.obj){
       //         that.chartModType = that.searchMod
       //         that.regionResult = resp.data.obj
+      //
+      //         this.chartToShow = this.splitResult(this.regionResult)
+      //
       //       }
       //       else {
       //         alert("Searching Fail!")
@@ -309,54 +334,17 @@
             location: 'Gensoukyou'
           },
         ]
+
+        this.chartToShow = this.splitResult(this.fuzzyResult)
+
       },
       submitSalary(){
         if(this.salarySubmitCheck===false){
           return
         }
         this.chartModType = this.searchMod
-        this.salaryResult = [
-          {
-            name: 'Miko',
-            org: 'HakureiJinja',
-            salary: {
-              floor: '0',
-              ceiling: '100000'
-            },
-            edu: 'no damand',
-            location: 'Gensoukyou'
-          },
-          {
-            name: 'Magician',
-            org: 'KirisameMahoumise',
-            salary: {
-              floor: '1000',
-              ceiling: '1000'
-            },
-            edu: 'no damand',
-            location: 'Gensoukyou'
-          },
-          {
-            name: 'Maid',
-            org: 'Koumakan',
-            salary: {
-              floor: '20000',
-              ceiling: '30000'
-            },
-            edu: 'no damand',
-            location: 'Gensoukyou'
-          },
-          {
-            name: 'Witch',
-            org: 'Koumakan',
-            salary: {
-              floor: '20000',
-              ceiling: '30000'
-            },
-            edu: 'no damand',
-            location: 'Gensoukyou'
-          },
-        ]
+        this.salaryResult = []
+        this.chartToShow = this.splitResult(this.salaryResult)
       },
       submitRegion(){
         this.chartModType = this.searchMod
@@ -377,7 +365,120 @@
             name: 'Witch',
             employees: 3
           },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
+          {
+            name: 'Miko',
+            employees: 2
+          },
+          {
+            name: 'Magician',
+            employees: 2
+          },
+          {
+            name: 'Maid',
+            employees: 1
+          },
+          {
+            name: 'Witch',
+            employees: 3
+          },
         ]
+        this.chartToShow = this.splitResult(this.regionResult)
       },
 
       searchActive(e){
@@ -389,6 +490,35 @@
       getCity(province, city){
         this.searchRegion.province = province
         this.searchRegion.city = city
+      },
+      toPrevPage(){
+        if(this.chartPageNum-1 >= 0){
+          this.chartPageNum-=1
+        }
+      },
+      toNextPage(){
+        if(this.chartPageNum+1 < this.chartToShow.length){
+          this.chartPageNum+=1
+        }
+      },
+
+      //tool functions
+      splitResult(array){
+        const len = this.ITEMS_PER_PAGE
+        let arrLen = array.length
+        let result = []
+        for(let i=0; i<arrLen; i+=len){
+          result.push(array.slice(i,i+len))
+        }
+        return result
+      },
+      getChart(index){
+        if(index >= this.chartToShow.length){
+          return []
+        }
+        else {
+          return this.chartToShow[index]
+        }
       }
     },
     watch:{
@@ -399,7 +529,7 @@
     computed:{
       //legality check before searching submit
       fuzzySubmitCheck(){
-        if(this.searchBox.length <= 0){
+        if(this.searchBox.searchKeys.length <= 0){
           this.alertMsg = 'Input cannot be empty!'
           return false
         }

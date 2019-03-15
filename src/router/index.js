@@ -14,11 +14,11 @@ import RegistCard from '../views/RegistCard'
 import PersonalPage from '../views/PersonalPage'
 import UserInfoCard from '../views/UserInfoCard'
 import AnalysisPage from '../views/AnalysisPage'
-
 import UserInfoEditCard from '../views/UserInfoEditCard'
 import ManagerPage from '../views/ManagerPage'
 import UserManagement from '../views/UserManagement'
 import SearchPage from '../views/SearchPage'
+import DataSrcManagement from '../views/DataSrcManagement'
 
 import axios from 'axios'
 
@@ -96,6 +96,14 @@ const routes = {
                 requireAuth: true
               },
               component: UserManagement
+            },
+            {
+              path:'/home/managerPage/dataSrccManagement',
+              name:'DataSrcManagement',
+              meta:{
+                requireAuth: true,
+              },
+              component: DataSrcManagement
             }
           ],
         },
