@@ -139,6 +139,7 @@
       jumpToHomePage(){
         console.log('跳转至主页面')
         this.$router.replace({name: 'Home'})
+        location.reload()
       },
 
       //测试用登录入口,正式部署时删除
@@ -161,7 +162,7 @@
     },
 
     computed:{
-        encodeForm(){
+      encodeForm(){
         const hashPassword = md(this.logInForm.password)
         return {
           "username": this.logInForm.username,

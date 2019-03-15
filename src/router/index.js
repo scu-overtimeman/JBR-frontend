@@ -18,6 +18,7 @@ import AnalysisPage from '../views/AnalysisPage'
 import UserInfoEditCard from '../views/UserInfoEditCard'
 import ManagerPage from '../views/ManagerPage'
 import UserManagement from '../views/UserManagement'
+import SearchPage from '../views/SearchPage'
 
 import axios from 'axios'
 
@@ -105,6 +106,14 @@ const routes = {
             requireAuth: true
           },
           component: AnalysisPage
+        },
+        {
+          path: '/home/searchPage',
+          name: 'SearchPage',
+          meta:{
+            requireAuth: true
+          },
+          component: SearchPage
         },
       ],
     },
