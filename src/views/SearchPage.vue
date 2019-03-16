@@ -99,7 +99,7 @@
               <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
                 <td v-show="fuzzyShowProp[0].chosen">{{i.name}}</td>
                 <td v-show="fuzzyShowProp[1].chosen">{{i.org}}</td>
-                <td v-show="fuzzyShowProp[2].chosen">{{i.salary.floor}}-{{i.salary.ceiling}}</td>
+                <td v-show="fuzzyShowProp[2].chosen">{{i.salaryFloor}}-{{i.salaryCeiling}}</td>
                 <td v-show="fuzzyShowProp[3].chosen">{{i.edu}}</td>
                 <td v-show="fuzzyShowProp[4].chosen">{{i.location}}</td>
               </tr>
@@ -129,7 +129,8 @@
               <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
                 <td v-show="salaryShowProp[0].chosen">{{i.name}}</td>
                 <td v-show="salaryShowProp[1].chosen">{{i.org}}</td>
-                <td v-show="salaryShowProp[2].chosen">{{i.salary.floor}}-{{i.salary.ceiling}}</td>
+                <td v-show="salaryShowProp[2].chosen && i.salaryFloor!=='-1'">{{i.salaryFloor}}-{{i.salaryCeiling}}</td>
+                <td v-show="i.salaryFloor==='-1'">面议</td>
                 <td v-show="salaryShowProp[3].chosen">{{i.edu}}</td>
                 <td v-show="salaryShowProp[4].chosen">{{i.location}}</td>
               </tr>
@@ -276,27 +277,32 @@
           return
         }
         const that = this
-        axios.post(this.URL_FUZZY, this.searchBox.searchKeys)
-          .then(resp=>{
-            if(resp.data.obj){
-              console.log("resp:"+resp)
-              console.log("resp.data:"+resp.data)
-              console.log("resp.data.obj:"+resp.data.obj)
-              console.log("resp.obj:"+resp.obj)
-              that.chartModType = that.searchMod
-              that.fuzzyResult = resp.data.obj
-
-              this.chartToShow = this.splitResult(this.fuzzyResult)
-
-            }
-            else {
-              alert("Searching Fail!")
-            }
-          })
-          .catch(err=>{
-            console.log(err.message)
-            alert("Searching Fail: "+err.message)
-          })
+        axios({
+          url:this.URL_FUZZY,
+          method:'post',
+          data: this.searchBox,
+          headers:{
+            'Content-Type':'application/json; charset=utf-8'
+          }
+        })
+        .then(resp=>{
+          if(resp.data.obj){
+            console.log("resp:"+resp)
+            console.log("resp.data:"+resp.data)
+            console.log("resp.data.obj:"+resp.data.obj)
+            console.log("resp.obj:"+resp.obj)
+            that.chartModType = that.searchMod
+            that.fuzzyResult = resp.data.obj
+            that.chartToShow = this.splitResult(this.fuzzyResult)
+          }
+          else {
+            alert("Searching Fail!")
+          }
+        })
+        .catch(err=>{
+          console.log(err.message)
+          alert("Searching Fail: "+err.message)
+        })
       },
       submitSalary(){
         if(this.salarySubmitCheck===false){
@@ -309,7 +315,7 @@
               that.chartModType = that.searchMod
               that.salaryResult = resp.data.obj
 
-              this.chartToShow = this.splitResult(this.salaryResult)
+              that.chartToShow = this.splitResult(this.salaryResult)
 
             }
             else {
