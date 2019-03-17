@@ -99,7 +99,8 @@
               <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
                 <td v-show="fuzzyShowProp[0].chosen">{{i.name}}</td>
                 <td v-show="fuzzyShowProp[1].chosen">{{i.org}}</td>
-                <td v-show="fuzzyShowProp[2].chosen">{{i.salaryFloor}}-{{i.salaryCeiling}}</td>
+                <td v-show="fuzzyShowProp[2].chosen && i.salaryFloor!=='-1'">{{i.salaryFloor}}-{{i.salaryCeiling}}</td>
+                <td v-show="i.salaryFloor==='-1'">面议</td>
                 <td v-show="fuzzyShowProp[3].chosen">{{i.edu}}</td>
                 <td v-show="fuzzyShowProp[4].chosen">{{i.location}}</td>
               </tr>
@@ -156,8 +157,8 @@
             </thead>
             <tbody>
             <tr v-for="(i, index) in getChart(chartPageNum)" :key="index">
-              <td v-show="regionShowProp[0].chosen">{{i.name}}</td>
-              <td v-show="regionShowProp[1].chosen">{{i.employees}}</td>
+              <td v-show="regionShowProp[0].chosen">{{i.location}}</td>
+              <td v-show="regionShowProp[1].chosen">{{i.count}}</td>
             </tr>
             </tbody>
           </table>
@@ -197,8 +198,8 @@
       return{
 
         URL_FUZZY: 'transaction/searchBox',
-        URL_SALARY: 'transaction/searchRegion',
-        URL_REGION: 'transaction/searchSalaryRange',
+        URL_SALARY: 'transaction/searchSalaryRange',
+        URL_REGION: 'transaction/searchRegion',
 
         //alertMsg
         alertMsg : '',
@@ -212,8 +213,9 @@
           searchKeys: ''
         },
         searchSalaryRange: {
-          ceiling: 0,
-          floor: 0
+          floor: 0,
+          ceiling: 0
+
         },
         searchRegion: {
           province: '',
@@ -242,7 +244,7 @@
         ],
         regionShowProp:[
           {name: 'name',chosen: true,},
-          {name:'employees',chosen: true}
+          {name:'salary',chosen: true}
         ],
 
         //chart to show
@@ -287,10 +289,7 @@
         })
         .then(resp=>{
           if(resp.data.obj){
-            console.log("resp:"+resp)
-            console.log("resp.data:"+resp.data)
-            console.log("resp.data.obj:"+resp.data.obj)
-            console.log("resp.obj:"+resp.obj)
+            alert("Success!")
             that.chartModType = that.searchMod
             that.fuzzyResult = resp.data.obj
             that.chartToShow = this.splitResult(this.fuzzyResult)
@@ -309,33 +308,42 @@
           return
         }
         const that = this
-        axios.post(this.URL_SALARY, this.searchSalaryRange)
-          .then(resp=>{
-            if(resp.data.obj){
-              that.chartModType = that.searchMod
-              that.salaryResult = resp.data.obj
+        axios({
+          url:this.URL_SALARY,
+          method:'post',
+          data: this.searchSalaryRange,
+          headers:{
+            'Content-Type':'application/json; charset=utf-8'
+          }
+        })
+        .then(resp=>{
+          if(resp.data.obj){
+            alert("Success!")
+            that.chartModType = that.searchMod
+            that.salaryResult = resp.data.obj
 
-              that.chartToShow = this.splitResult(this.salaryResult)
+            that.chartToShow = that.splitResult(that.salaryResult)
 
-            }
-            else {
-              alert("Searching Fail!")
-            }
-          })
-          .catch(err=>{
-            console.log(err.message)
-            alert("Searching Fail: "+err.message)
-          })
+          }
+          else {
+            alert("Searching Fail!")
+          }
+        })
+        .catch(err=>{
+          console.log(err.message)
+          alert("Searching Fail: "+err.message)
+        })
       },
       submitRegion(){
         const that = this
         axios.post(this.URL_REGION, this.searchRegion)
           .then(resp=>{
             if(resp.data.obj){
+              alert("Success!")
               that.chartModType = that.searchMod
               that.regionResult = resp.data.obj
 
-              this.chartToShow = this.splitResult(this.regionResult)
+              that.chartToShow = that.splitResult(that.regionResult)
 
             }
             else {
@@ -605,6 +613,7 @@
           return false
         }
         else {
+          this.alertMsg = ''
           return true
         }
       },

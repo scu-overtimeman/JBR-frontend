@@ -96,9 +96,9 @@
         if(!(this.logInForm.username && this.logInForm.password)){
           this.alertMsg = 'Input cannot be empty！'
         }
-        // else if(grecaptcha.getResponse(this.recaptId).length === 0){
-        //   this.alertMsg = 'Please complete the authentication!'
-        // }
+        else if(grecaptcha.getResponse(this.recaptId).length === 0){
+          this.alertMsg = 'Please complete the authentication!'
+        }
         else{
           this.alertMsg = ''
           this.postUserForm()
@@ -120,10 +120,8 @@
         ).then((response)=> {
           const respCode = response.data.status
           const respUserObj = response.data.obj
-          alert('ytytyt')
           if(respCode===CODE_SUCCESS){
             that.alertMsg = ''
-            alert(respCode)
             //更新令牌,本地储存用户信息
             that.$store.commit(types.LOGIN, JSON.stringify(respUserObj))
             that.jumpToHomePage()
